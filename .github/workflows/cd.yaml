@@ -34,4 +34,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
-          script: cd ~/k8s_shitpost && microk8s kubectl apply -f kubernetes-manifests.yaml
+          script: cd ~/k8s_shitpost && ./start.sh
