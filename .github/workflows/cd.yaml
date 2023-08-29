@@ -26,3 +26,12 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: cd ~/k8s_shitpost && docker-compose build
+
+      - name: Start kubernetes service
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: cd ~/k8s_shitpost && microk8s kubectl apply -f kubernetes-manifests.yaml
