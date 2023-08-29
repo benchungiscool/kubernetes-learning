@@ -1,4 +1,4 @@
-name: Deploy newest version
+name: Run demo
 
 on:
   workflow_dispatch:
