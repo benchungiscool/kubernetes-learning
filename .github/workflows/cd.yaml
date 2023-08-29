@@ -1,4 +1,4 @@
-name: Spin up kubectl
+name: Spin up kubernetes service
 
 on:
   workflow_dispatch:
