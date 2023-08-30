@@ -26,28 +26,19 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd ~/kube_learning
-            echo "FROM python:bookworm
-
-            WORKDIR /app
-
-            COPY requirements.txt /app/requirements.txt
-            COPY src /app/
-
-            RUN pip install --no-cache-dir -r requirements.txt
-
-            CMD [\"python\", \"-m\", \"client\"]"" > docker/client_Dockerfile
-            echo "FROM python:bookworm
-
-            WORKDIR /app
-
-            COPY requirements.txt /app/requirements.txt
-            COPY src /app/
-
-            RUN pip install --no-cache-dir -r requirements.txt
-
-            CMD [\"python\", \"-m\", \"server\"]"" > docker/server_Dockerfile
-
-
+            rm docker/*
+            echo "FROM python:bookworm\n"" >> docker/client_Dockerfile
+            echo "WORKDIR /app" >> docker/client_Dockerfile
+            echo "COPY requirements.txt /app/requirements.txt" >> docker/client_Dockerfile
+            echo "COPY src /app/" >> docker/client_Dockerfile
+            echo "RUN pip install --no-cache-dir -r requirements.txt" >> docker/client_Dockerfile
+            echo "CMD [\"python\", \"-m\", \"client\"]" >> docker/client_Dockerfile
+            echo "FROM python:bookworm\n"" >> docker/server_Dockerfile
+            echo "WORKDIR /app" >> docker/server_Dockerfile
+            echo "COPY requirements.txt /app/requirements.txt" >> docker/server_Dockerfile
+            echo "COPY src /app/" >> docker/server_Dockerfile
+            echo "RUN pip install --no-cache-dir -r requirements.txt" >> docker/server_Dockerfile
+            echo "CMD [\"python\", \"-m\", \"server\"]" >> docker/server_Dockerfile
 
       - name: Build docker images
         uses: appleboy/ssh-action@master
