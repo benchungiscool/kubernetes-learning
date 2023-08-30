@@ -40,18 +40,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            echo 'FROM python:bookworm
-            WORKDIR /app
-            COPY requirements.txt /app/requirements.txt
-            COPY src /app/
-            RUN pip install --no-cache-dir -r requirements.txt
-            CMD ["python", "-m", "server"]' > ~/kube_learning/docker/server_Dockerfile
-            echo 'FROM python:bookworm
-            WORKDIR /app
-            COPY requirements.txt /app/requirements.txt
-            COPY src /app/
-            RUN pip install --no-cache-dir -r requirements.txt
-            CMD ["python", "-m", "client"]' > ~/kube_learning/docker/client_Dockerfile
+            cd ~/kube_learning/docker
+            mv client_Dockerfile correct_client_Dockerfile
+            mv server_Dockerfile correct_server_Dockerfile
+            mv wrong_client_Dockerfile client_Dockerfile
+            mv wrong_server_Dockerfile server_Dockerfile
 
       - name: Build docker images
         uses: appleboy/ssh-action@master
