@@ -1,13 +1,14 @@
-name: Spin up kubernetes service
+name: Build correct docker containers
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    user:
+      - benchungiscool
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+
 
     steps:
       - name: Setup SSH
@@ -15,6 +16,38 @@ jobs:
           mkdir ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+
+      - name: Overwrite dockerfiles
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd ~/kube_learning
+            echo "FROM python:bookworm
+
+            WORKDIR /app
+
+            COPY requirements.txt /app/requirements.txt
+            COPY src /app/
+
+            RUN pip install --no-cache-dir -r requirements.txt
+
+            CMD [\"python\", \"-m\", \"client\"]"" > docker/client_Dockerfile
+            echo "FROM python:bookworm
+
+            WORKDIR /app
+
+            COPY requirements.txt /app/requirements.txt
+            COPY src /app/
+
+            RUN pip install --no-cache-dir -r requirements.txt
+
+            CMD [\"python\", \"-m\", \"server\"]"" > docker/server_Dockerfile
+
+
 
       - name: Build docker images
         uses: appleboy/ssh-action@master
@@ -29,13 +62,3 @@ jobs:
             docker push benchungbenchung/k8s_test:server001
             docker push benchungbenchung/k8s_test:client001
 
-      - name: Start kubernetes service
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.PORT }}
-          script: |
-            cd ~/kube-learning
-            kubectl apply -f deployment
