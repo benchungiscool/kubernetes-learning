@@ -1,11 +1,9 @@
 name: Spin up kubernetes service
 
 on:
-  workflow_dispatch:
-    permissions:
-      users:
-        - benchunghpe
-        - benchungiscool
+  push:
+    branches:
+      - main
 
 jobs:
   deploy:
@@ -36,4 +34,4 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd ~/k8s_shitpost
-            ./start.sh
+            microk8s.kubectl apply -f kubernetes-manifests.yaml
