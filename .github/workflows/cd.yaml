@@ -36,4 +36,4 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd ~/k8s_shitpost
-            microk8s apply -f kubernetes-manifests.yaml
+            ./start.sh
