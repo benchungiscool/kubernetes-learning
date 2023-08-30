@@ -17,7 +17,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      - name: Overwrite dockerfiles
+      - name: Ensure k8s
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -25,20 +25,31 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ~/kube_learning
-            rm docker/*
-            echo "FROM python:bookworm\n"" >> docker/client_Dockerfile
-            echo "WORKDIR /app" >> docker/client_Dockerfile
-            echo "COPY requirements.txt /app/requirements.txt" >> docker/client_Dockerfile
-            echo "COPY src /app/" >> docker/client_Dockerfile
-            echo "RUN pip install --no-cache-dir -r requirements.txt" >> docker/client_Dockerfile
-            echo "CMD [\"python\", \"-m\", \"client\"]" >> docker/client_Dockerfile
-            echo "FROM python:bookworm\n"" >> docker/server_Dockerfile
-            echo "WORKDIR /app" >> docker/server_Dockerfile
-            echo "COPY requirements.txt /app/requirements.txt" >> docker/server_Dockerfile
-            echo "COPY src /app/" >> docker/server_Dockerfile
-            echo "RUN pip install --no-cache-dir -r requirements.txt" >> docker/server_Dockerfile
-            echo "CMD [\"python\", \"-m\", \"server\"]" >> docker/server_Dockerfile
+            curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+            chmod +x ./kubectl
+            sudo mv ./kubectl /usr/local/bin/kubectl
+            kubectl cluster-info
+
+      - name: Add
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            echo 'FROM python:bookworm
+            WORKDIR /app
+            COPY requirements.txt /app/requirements.txt
+            COPY src /app/
+            RUN pip install --no-cache-dir -r requirements.txt
+            CMD ["python", "-m", "server"]' > ~/kube_learning/docker/server_Dockerfile
+            echo 'FROM python:bookworm
+            WORKDIR /app
+            COPY requirements.txt /app/requirements.txt
+            COPY src /app/
+            RUN pip install --no-cache-dir -r requirements.txt
+            CMD ["python", "-m", "client"]' > ~/kube_learning/docker/client_Dockerfile
 
       - name: Build docker images
         uses: appleboy/ssh-action@master
@@ -52,4 +63,3 @@ jobs:
             docker-compose build
             docker push benchungbenchung/k8s_test:server001
             docker push benchungbenchung/k8s_test:client001
-
