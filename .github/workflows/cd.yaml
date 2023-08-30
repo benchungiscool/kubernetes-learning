@@ -23,7 +23,11 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
-          script: cd ~/k8s_shitpost && docker-compose build
+          script: |
+            cd ~/kube_learning
+            docker-compose build
+            docker push benchungbenchung/k8s_test:server001
+            docker push benchungbenchung/k8s_test:client001
 
       - name: Start kubernetes service
         uses: appleboy/ssh-action@master
@@ -33,5 +37,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ~/k8s_shitpost
-            microk8s.kubectl apply -f kubernetes-manifests.yaml
+            cd ~/kube-learning
+            kubectl apply -f deployment
