@@ -25,10 +25,12 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-            chmod +x ./kubectl
-            sudo mv ./kubectl /usr/local/bin/kubectl
-            kubectl cluster-info
+
+      - name: Ensure k8s
+        env:
+        SUDO_PASSWORD: ${{ secrets.SUDO_PASSWORD }}
+        run: |
+          sshpass -p $SUDO_PASSWORD ssh user@your-server "kubectl get pods"
 
       - name: Add
         uses: appleboy/ssh-action@master
