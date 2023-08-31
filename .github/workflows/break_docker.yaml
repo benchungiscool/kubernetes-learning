@@ -22,8 +22,8 @@ jobs:
             cd ~/kube_learning/docker
             mv client_Dockerfile wrong_client_Dockerfile
             mv server_Dockerfile wrong_server_Dockerfile
-            mv correct_client_Dockerfile client_Dockerfile
-            mv correct_server_Dockerfile server_Dockerfile
+            mv client_Dockerfile correct_client_Dockerfile
+            mv server_Dockerfile correct_server_Dockerfile
 
       - name: Build docker images
         uses: appleboy/ssh-action@master
