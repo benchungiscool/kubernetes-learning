@@ -11,12 +11,6 @@ jobs:
 
 
     steps:
-      - name: Setup SSH
-        run: |
-          mkdir ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
       - name: Overwrite dockerfiles
         uses: appleboy/ssh-action@master
         with:
@@ -25,18 +19,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd ~/kube_learning
-            rm docker/*
-            echo "FROM python:bookworm\n"" >> docker/client_Dockerfile
-            echo "WORKDIR /app" >> docker/client_Dockerfile
-            echo "COPY requirements.txt /app/requirements.txt" >> docker/client_Dockerfile
-            echo "COPY src /app/" >> docker/client_Dockerfile
-            echo "RUN pip install --no-cache-dir -r requirements.txt" >> docker/client_Dockerfile
-            echo "FROM python:bookworm\n"" >> docker/server_Dockerfile
-            echo "WORKDIR /app" >> docker/server_Dockerfile
-            echo "COPY requirements.txt /app/requirements.txt" >> docker/server_Dockerfile
-            echo "COPY src /app/" >> docker/server_Dockerfile
-            echo "RUN pip install --no-cache-dir -r requirements.txt" >> docker/server_Dockerfile
+            cd ~/kube_learning/docker
+            mv client_Dockerfile wrong_client_Dockerfile
+            mv server_Dockerfile wrong_server_Dockerfile
+            mv correct_client_Dockerfile client_Dockerfile
+            mv correct_server_Dockerfile server_Dockerfile
 
       - name: Build docker images
         uses: appleboy/ssh-action@master
