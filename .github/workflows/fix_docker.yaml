@@ -1,4 +1,4 @@
-name: Break docker containers
+name: Build correct docker containers
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Overwrite deployment.yaml
+      - name: Overwrite deployment.yaml 
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -19,5 +19,5 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd ~/kube_learning/deployment
-            mv deployment.yaml good_deployment.yaml
-            mv evil_deployment.yaml deployment.yaml
+            mv deployment.yaml evil_deployment.yaml
+            mv good_deployment.yaml deployment.yaml
