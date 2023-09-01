@@ -1,4 +1,4 @@
-name: Build correct docker containers
+name: Fix kubernetes deployment.yaml
 
 on:
   workflow_dispatch:

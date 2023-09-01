@@ -1,4 +1,4 @@
-name: Break docker containers
+name: Break kubernetes deployment.yaml
 
 on:
   workflow_dispatch:
