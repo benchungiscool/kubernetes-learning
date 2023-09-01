@@ -65,6 +65,7 @@ if __name__ == "__main__":
     if not exists(sound_path):
         print(f"Could not find sound file at path {sound_path}! Try modifying config.yaml")
 
+    print(f"Listening on url {url} for broken Kubernetes pods...")
     while True:
         if check_failed():
             play_sound()
